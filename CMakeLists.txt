@@ -121,6 +121,7 @@ endif()
 
 # this creates the static library (.a)
 ADD_LIBRARY( ${ly_lib_static} STATIC ${ly_lib_parts})
+target_include_directories(${ly_lib_static} PUBLIC ${ly_inc_dir})
 
 # this creates the shared library (.so)
 ADD_LIBRARY( ${ly_lib_shared} SHARED ${ly_lib_parts})
