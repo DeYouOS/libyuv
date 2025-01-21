@@ -14,7 +14,7 @@ set ( ly_inc_dir	${ly_base_dir}/include )
 set ( ly_tst_dir	${ly_base_dir}/unit_test )
 set ( ly_lib_name	yuv )
 set ( ly_lib_static	${ly_lib_name} )
-set ( ly_lib_shared	${ly_lib_name}_shared )
+# set ( ly_lib_shared	${ly_lib_name}_shared )
 
 # We cannot use GLOB here since we want to be able to separate out files that
 # need particular flags to enable architecture extensions like AArch64's SVE.
@@ -175,14 +175,15 @@ endif()
 
 # this creates the static library (.a)
 add_library( ${ly_lib_static} STATIC ${ly_lib_parts})
+target_include_directories(${ly_lib_static} PUBLIC ${ly_inc_dir})
 
 # this creates the shared library (.so)
-add_library( ${ly_lib_shared} SHARED ${ly_lib_parts})
-set_target_properties( ${ly_lib_shared} PROPERTIES OUTPUT_NAME "${ly_lib_name}" )
-set_target_properties( ${ly_lib_shared} PROPERTIES PREFIX "lib" )
-if(WIN32)
-  set_target_properties( ${ly_lib_shared} PROPERTIES IMPORT_PREFIX "lib" )
-endif()
+# add_library( ${ly_lib_shared} SHARED ${ly_lib_parts})
+# set_target_properties( ${ly_lib_shared} PROPERTIES OUTPUT_NAME "${ly_lib_name}" )
+# set_target_properties( ${ly_lib_shared} PROPERTIES PREFIX "lib" )
+# if(WIN32)
+#   set_target_properties( ${ly_lib_shared} PROPERTIES IMPORT_PREFIX "lib" )
+# endif()
 
 # this creates the cpuid tool
 add_executable      ( cpuid ${ly_base_dir}/util/cpuid.c )
@@ -196,12 +197,11 @@ target_link_libraries	( yuvconvert ${ly_lib_static} )
 add_executable      ( yuvconstants ${ly_base_dir}/util/yuvconstants.c )
 target_link_libraries  ( yuvconstants ${ly_lib_static} )
 
-find_package ( JPEG )
-if (JPEG_FOUND)
-  include_directories( ${JPEG_INCLUDE_DIR} )
-  target_link_libraries( ${ly_lib_shared} ${JPEG_LIBRARY} )
-  add_definitions( -DHAVE_JPEG )
-endif()
+include_directories(
+        ../libjpeg-turbo/libjpeg-turbo
+        ../libjpeg-turbo/include )
+# target_link_libraries( ${ly_lib_shared} jpeg )
+add_definitions( -DHAVE_JPEG )
 
 if(UNIT_TEST)
   find_library(GTEST_LIBRARY gtest)
@@ -248,7 +248,7 @@ endif()
 # install the conversion tool, .so, .a, and all the header files
 install ( TARGETS yuvconvert DESTINATION bin )
 install ( TARGETS ${ly_lib_static}						DESTINATION lib )
-install ( TARGETS ${ly_lib_shared} LIBRARY DESTINATION lib RUNTIME DESTINATION bin ARCHIVE DESTINATION lib )
+# install ( TARGETS ${ly_lib_shared} LIBRARY DESTINATION lib RUNTIME DESTINATION bin ARCHIVE DESTINATION lib )
 install ( DIRECTORY ${PROJECT_SOURCE_DIR}/include/		DESTINATION include )
 
 # create the .deb and .rpm packages using cpack
