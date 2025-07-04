@@ -197,11 +197,11 @@ target_link_libraries	( yuvconvert ${ly_lib_static} )
 add_executable      ( yuvconstants ${ly_base_dir}/util/yuvconstants.c )
 target_link_libraries  ( yuvconstants ${ly_lib_static} )
 
-include_directories(
-        ../libjpeg-turbo/libjpeg-turbo
-        ../libjpeg-turbo/include )
+# include_directories(
+#        ../libjpeg-turbo/libjpeg-turbo
+#        ../libjpeg-turbo/include )
 # target_link_libraries( ${ly_lib_shared} jpeg )
-add_definitions( -DHAVE_JPEG )
+# add_definitions( -DHAVE_JPEG )
 
 if(UNIT_TEST)
   find_library(GTEST_LIBRARY gtest)
